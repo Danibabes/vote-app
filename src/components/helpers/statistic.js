@@ -1,10 +1,15 @@
 import _ from 'lodash';
 
 export const getAllStatistics = (list, data) => {
-  return _.map(data?.presidential.list || [], (dd) => {
-    const name = [dd.last_name, dd.first_name].join(', ');
-    return getStatisticsByName(list, name);
-  });
+  const getStatisticData = ({ first_name, last_name }) => {
+    return getStatisticsByName(list, [last_name, first_name].join(', '));
+  }
+
+  const data1 = _.map(data?.presidential.list || [], getStatisticData);
+
+  const data2 = _.map(data?.vicepresidential.list || [], getStatisticData);
+
+  return [...data1, ...data2]
 };
 
 export const getStatisticsByName = (list, name) => {
