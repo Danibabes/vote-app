@@ -62,11 +62,6 @@ const Ballot = () => {
 
   const handleOnSubmit = async () => {
     const userId = await getUserId();
-
-    // Create an initial document to update.
-    // const frankDocRef = doc(db, 'users', 'frank2');
-    // await setDoc(frankDocRef, { ...selectedCandidate });
-
     const docRef = doc(db, 'users', userId);
     await updateDoc(docRef, { ...selectedCandidate }).then(() => {
       setSelectedCandidate(null);
