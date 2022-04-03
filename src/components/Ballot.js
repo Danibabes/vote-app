@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { query, collection, addDoc, getDocs, where } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth, db } from '../auth/firebase';
+import { query, collection, doc, updateDoc, where } from 'firebase/firestore';
+import { auth, db, getDocs } from '../auth/firebase';
 import _ from 'lodash';
 
 // Components
@@ -24,43 +24,35 @@ const Ballot = () => {
     }
   };
 
-  const handleOnSelectCandidate = async (data) => {
+  const handleOnSelectCandidate = async (obj) => {
     setSelectedCandidate({
       ...selectedCandidate,
       candidates: {
         ...selectedCandidate?.candidates,
-        [`${data.name}_id`]: data.id,
+        [obj.name]: obj.data,
       },
-      user_id: await getUserId(),
     });
   };
 
   const handleOnSubmit = async () => {
-    await addDoc(collection(db, 'votelist'), selectedCandidate).then(() => {
+    console.log('cc-selectedCandidate', selectedCandidate);
+    const userId = await getUserId();
+
+    const docRef = doc(db, 'users', userId);
+    await updateDoc(docRef, { ...selectedCandidate }).then(() => {
       setSelectedCandidate(null);
       window.alert('Thank you for voting!');
       window.location.reload();
     });
   };
 
-  const Card = ({ title, list, name, onSelectCandidate, ...props }) => {
+  const Card = ({ title, children, ...props }) => {
     return (
       <div className="card rounded border border-blue-500 my-10" {...props}>
         <h1 className="text-white font-semibold text-xl tracking-wide bg-blue-500 px-3 py-2">
           {title}
         </h1>
-        <div className="flex flex-wrap p-1">
-          {_.map(list, (data, idx) => (
-            <Candidate
-              key={idx}
-              data={data}
-              name={name}
-              list={selectedCandidate?.candidates}
-              onSelectCandidate={onSelectCandidate}
-              className="hover:bg-blue-50 rounded w-1/2 py-2 px-3"
-            />
-          ))}
-        </div>
+        <div className="flex flex-wrap p-1">{children}</div>
       </div>
     );
   };
@@ -70,13 +62,18 @@ const Ballot = () => {
       {_.map(_.keys(candidates), (name, idx) => {
         const { title, list } = candidates[name];
         return (
-          <Card
-            key={idx}
-            title={title}
-            list={list}
-            name={name}
-            onSelectCandidate={handleOnSelectCandidate}
-          />
+          <Card key={idx} title={title}>
+            {_.map(list, (data, idx) => (
+              <Candidate
+                key={idx}
+                data={data}
+                name={name}
+                list={selectedCandidate?.candidates}
+                onSelectCandidate={handleOnSelectCandidate}
+                className="hover:bg-blue-50 rounded w-1/2 py-2 px-3"
+              />
+            ))}
+          </Card>
         );
       })}
       <button
