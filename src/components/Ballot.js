@@ -33,7 +33,7 @@ const Ballot = () => {
     console.log('cc-doc.docs', list);
 
     const data1 = helpers.getAllStatistics(list, candidates);
-    const data2 = helpers.getStatisticsByName(list, 'Domagoso, Isko Moreno');
+    const data2 = helpers.getStatisticsByName(list, 'Domagoso, Isko Moreno', 'presidential');
 
     console.log('cc-data1', data1);
     console.log('cc-data2', data2);
