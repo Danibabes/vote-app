@@ -1,34 +1,34 @@
 import _ from 'lodash';
 
 export const getAllStatistics = (list, data) => {
-  const getStatisticData = ({ first_name, last_name }) => {
-    return getStatisticsByName(list, [last_name, first_name].join(', '));
+  const getStatisticData = ({ first_name, last_name }, position) => {
+    return getStatisticsByName(list, `${last_name}, ${first_name}`, position);
   }
 
-  const data1 = _.map(data?.presidential.list || [], getStatisticData);
+  const result = _.flattenDeep(
+    _.map(_.keys(data), position =>
+      _.map(_.get(data, `${position}.list`, []),
+        _this => getStatisticData(_this, position)
+      )
+    )
+  )
 
-  const data2 = _.map(data?.vicepresidential.list || [], getStatisticData);
+  return result
 
-  return [...data1, ...data2]
+  //const data1 = _.map(data?.presidential.list || [],
+  //  _this => getStatisticData(_this, 'presidential')
+  //);
+  //const data2 = _.map(data?.vicepresidential.list || [],
+  //  _this => getStatisticData(_this, 'vicepresidential')
+  //);
+  
+  //return [...data1, ...data2]
 };
 
-export const getStatisticsByName = (list, name) => {
-  const filteredPresidentialList = _.filter(list, [
-    'candidates.presidential.full_name',
-    name,
-  ]);
-  const filteredVicePresidentialList = _.filter(list, [
-    'candidates.vicepresidential.full_name',
-    name,
-  ]);
+export const getStatisticsByName = (list, name, position, keyName = 'full_name') => {
+  const property = ['candidates', position, keyName].join('.');
+  const filteredData = _.filter(list, [property, name]);
+  const count = filteredData.length;
 
-  const count =
-    filteredPresidentialList.length + filteredVicePresidentialList.length;
-
-  const data = {
-    name,
-    count,
-  };
-
-  return data;
+  return { name, position, count };
 };
