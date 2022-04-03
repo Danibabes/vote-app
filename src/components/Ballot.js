@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { query, collection, doc, updateDoc, where } from 'firebase/firestore';
+import {
+  query,
+  collection,
+  doc,
+  updateDoc,
+  where,
+  setDoc,
+} from 'firebase/firestore';
 import { auth, db, getDocs } from '../auth/firebase';
 import _ from 'lodash';
 
 // Components
 import Candidate from './Candidate';
+
+// Helpers
+import * as helpers from './helpers';
 
 // JSON
 import candidates from '../candidates.json';
@@ -13,6 +23,22 @@ import candidates from '../candidates.json';
 const Ballot = () => {
   const [user] = useAuthState(auth);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
+
+  // this is sample only.
+  // start
+  React.useEffect(async () => {
+    const q = query(collection(db, 'users'));
+    const doc = await getDocs(q);
+    const list = doc.docs.map((doc) => doc.data());
+    console.log('cc-doc.docs', list);
+
+    const data1 = helpers.getAllStatistics(list, candidates);
+    const data2 = helpers.getStatisticsByName(list, 'Domagoso, Isko Moreno');
+
+    console.log('cc-data1', data1);
+    console.log('cc-data2', data2);
+  }, []);
+  // end
 
   const getUserId = async () => {
     try {
@@ -36,6 +62,10 @@ const Ballot = () => {
 
   const handleOnSubmit = async () => {
     const userId = await getUserId();
+
+    // Create an initial document to update.
+    // const frankDocRef = doc(db, 'users', 'frank2');
+    // await setDoc(frankDocRef, { ...selectedCandidate });
 
     const docRef = doc(db, 'users', userId);
     await updateDoc(docRef, { ...selectedCandidate }).then(() => {
