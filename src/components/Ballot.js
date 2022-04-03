@@ -35,7 +35,6 @@ const Ballot = () => {
   };
 
   const handleOnSubmit = async () => {
-    console.log('cc-selectedCandidate', selectedCandidate);
     const userId = await getUserId();
 
     const docRef = doc(db, 'users', userId);
