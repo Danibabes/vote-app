@@ -2,7 +2,6 @@ import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth, signInWithPopup, signOut} from "firebase/auth";
 import { getFirestore, query, getDocs, collection, where, addDoc } from "firebase/firestore";
 
-
 const firebaseConfig = {
   apiKey: 'AIzaSyA9TRcmGNCC8zF1YEZB67chxeBwK5Xp4HU',
   authDomain: 'react-firebase-auth-93c06.firebaseapp.com',
@@ -12,14 +11,11 @@ const firebaseConfig = {
   appId: '1:388513152774:web:8513c438ce7c0402fee887',
 };
 
-
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 const provider = new GoogleAuthProvider();
-
 
 const signInWithGoogle = async () => {
   try {
@@ -31,10 +27,10 @@ const signInWithGoogle = async () => {
 
     if (docs.docs.length === 0) {
       await addDoc(collection(db, "users"), {
-          uid: user.uid,
-          name: user.displayName,
-          authProvider: "google",
-          email: user.email,
+        uid: user.uid,
+        name: user.displayName,
+        authProvider: "google",
+        email: user.email,
       });
     
     }
@@ -44,10 +40,8 @@ const signInWithGoogle = async () => {
   }
 };
 
-
 const logout = () => {
   signOut(auth)
 };
-
 
 export { auth, signInWithGoogle, logout, db, collection, addDoc, getDocs };

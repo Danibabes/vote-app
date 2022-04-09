@@ -3,26 +3,17 @@ import _ from 'lodash';
 export const getAllStatistics = (list, data) => {
   const getStatisticData = ({ first_name, last_name }, position) => {
     return getStatisticsByName(list, `${last_name}, ${first_name}`, position);
-  }
+  };
 
   const result = _.flattenDeep(
-    _.map(_.keys(data), position =>
-      _.map(_.get(data, `${position}.list`, []),
-        _this => getStatisticData(_this, position)
+    _.map(_.keys(data), (position) =>
+      _.map(_.get(data, `${position}.list`, []), (_this) =>
+        getStatisticData(_this, position)
       )
     )
-  )
+  );
 
-  return result
-
-  //const data1 = _.map(data?.presidential.list || [],
-  //  _this => getStatisticData(_this, 'presidential')
-  //);
-  //const data2 = _.map(data?.vicepresidential.list || [],
-  //  _this => getStatisticData(_this, 'vicepresidential')
-  //);
-  
-  //return [...data1, ...data2]
+  return result;
 };
 
 export const getStatisticsByName = (list, name, position, keyName = 'full_name') => {

@@ -26,7 +26,7 @@ export default Candidate;
 
 const StyledCandidate = styled.div`
   cursor: pointer;
-`
+`;
 
 const StyledRadioButton = styled.span`
   width: 12px;
@@ -45,8 +45,8 @@ const StyledRadioButton = styled.span`
       border-radius: 50%;
     }
   }
-`
+`;
 
 const StyledName = styled.span`
   margin-left: 15px;
-`
+`;

@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import {
-  query,
-  collection,
-  doc,
-  updateDoc,
-  where,
-  setDoc,
-} from 'firebase/firestore';
+import { query, collection, doc, updateDoc, where } from 'firebase/firestore';
 import { auth, db, getDocs } from '../auth/firebase';
 import _ from 'lodash';
 
@@ -26,17 +19,21 @@ const Ballot = () => {
 
   // this is sample only.
   // start
-  React.useEffect(async () => {
-    const q = query(collection(db, 'users'));
-    const doc = await getDocs(q);
-    const list = doc.docs.map((doc) => doc.data());
-    console.log('cc-doc.docs', list);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const q = query(collection(db, 'users'));
+      const doc = await getDocs(q);
+      const list = doc.docs.map((doc) => doc.data());
+      console.log('cc-doc.docs', list);
 
-    const data1 = helpers.getAllStatistics(list, candidates);
-    const data2 = helpers.getStatisticsByName(list, 'Domagoso, Isko Moreno', 'presidential');
+      const data1 = helpers.getAllStatistics(list, candidates);
+      const data2 = helpers.getStatisticsByName(list, 'Duterte, Sara', 'vicepresidential');
 
-    console.log('cc-data1', data1);
-    console.log('cc-data2', data2);
+      console.log('cc-data1', data1);
+      console.log('cc-data2', data2);
+    };
+
+    fetchData().catch(console.error);
   }, []);
   // end
 
@@ -62,6 +59,7 @@ const Ballot = () => {
 
   const handleOnSubmit = async () => {
     const userId = await getUserId();
+
     const docRef = doc(db, 'users', userId);
     await updateDoc(docRef, { ...selectedCandidate }).then(() => {
       setSelectedCandidate(null);
